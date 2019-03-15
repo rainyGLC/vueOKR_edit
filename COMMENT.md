@@ -1,3 +1,6 @@
+    启动：cd vueOKR_edit
+          npm install
+          npm run serve
     模块化
     文档：https://www.kancloud.cn/yunye/axios/234846
         http://www.axios-js.com/docs/

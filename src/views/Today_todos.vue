@@ -132,7 +132,7 @@ export default {
         let created_time = new Date(new Date(created_at).toLocaleDateString()).getTime();
         let now_time = new Date(new Date().toLocaleDateString()).getTime();
         if(created_time >= now_time){
-          // this.$router.push({name:'notreflection',params:{id:newData.id}});
+          this.$router.push({name:'notreflection',params:{id:newData.id}});
         }
       }
     }).catch(err=>{
