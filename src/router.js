@@ -11,7 +11,6 @@ import Reflection from './views/Reflection.vue'
 import Complete_todos from './views/Complete_todos.vue'
 import View_okr from './views/View_okr.vue'
 import Edit_okr from './views/Edit_okr.vue'
-import Edit_todo from './views/Edit_todo.vue'
 
 Vue.use(Router)
 
@@ -70,11 +69,6 @@ const appRouter = new Router({
       path:'/editokr/:id',
       name:'editokr',
       component:Edit_okr
-    },
-    {
-      path:'/edittodo/:id',
-      name:'edittodo',
-      component:Edit_todo
     }
   ]
 });

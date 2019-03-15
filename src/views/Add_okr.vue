@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import okrModel from '@/global/model/okrModel.js'
 export default {
   name:'Add_okr',
   data(){
@@ -76,25 +77,19 @@ export default {
       keyresultArr.forEach((item,index)=>{
         keyresults.push(item.keyresult)
       })
-      let token = localStorage.getItem('tokens')
-      if(!objective ||!deadline ||!keyresults ||!token){
-        console.log(objective,deadline,keyresults,token)
+      if(!objective ||!deadline ||!keyresults){
+        console.log(objective,deadline,keyresults)
         return alert('缺少参数')
       }
-      let URL =' http://localhost:3000/api/okr';
-      this.axios.post(URL,{
-        token:token,
+      okrModel.addokr({
         objective:objective,
         keyresult:keyresults,
         deadline:deadline
-      }).then(res=>{
-        if(res.data.code == 200){
-          console.log(res)
-          this.$router.push({name:'mineokr',params:{token:token}});
-        }
-        else if(res.data.code == 0){
+      }).then( res => {
+        if(res.data.code==200){
+          this.$router.push({name:'mineokr'});
+        }else if(res.data.code==0){
           console.log(data)
-
         }
       }).catch(err=>{
         console.log(err)
@@ -116,7 +111,6 @@ export default {
 @divide: 10;
 @psdWidth: 750px;
 @ppr: @psdWidth/@divide/1rem;
-
 body{
   background-color: #f7f7f7;
 }

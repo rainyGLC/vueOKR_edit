@@ -9,7 +9,6 @@
     <div class="todos-banner">
       <img class='todos-banner-img' src="./../assets/image/complete-tixin.png">
     </div>
-
   </div>
 </div>
 </template>
@@ -19,9 +18,8 @@
 export default {
   name: 'complete',
   components: {
-
   },
-};
+}
 </script>
 <style lang="less">
 @divide: 10;

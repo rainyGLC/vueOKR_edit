@@ -30,13 +30,10 @@
       </div>
       <button class="addbtn" @click='add()'>添加OKR</button>
     </div>
-
   </div>
-
 </template>
-
 <script>
-
+import okrModel from '@/global/model/okrModel.js'
 export default {
   name:'Mineokr',
   data(){
@@ -46,14 +43,10 @@ export default {
     }
   },
   created(){
-    let token = localStorage.getItem('tokens');
     let objectiveArr =[];
-    let URL = 'http://localhost:3000/api/okr';
-    this.axios.get(URL,{
-      params:{"token":token}
-    }).then(res=>{
+    okrModel.okr().then(res=>{
+      console.log(res)
       if(res.data.code == 200){
-        // console.log(res.data.data.length);
         if(res.data.data.length>0){
           objectiveArr = res.data.data;
         }else{

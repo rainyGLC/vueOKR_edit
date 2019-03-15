@@ -40,7 +40,7 @@
 </template>
 
 <script>
-
+import userModel from '@/global/model/userModel.js';
 export default {
   name: 'login',
   data(){
@@ -55,32 +55,20 @@ export default {
     login(){
       let name = this.name;
       let password = this.password;
-      let URL = 'http://localhost:3000/api/login'
+
       if(!name || !password){
         this.hidden = false;
         return
       }
-      this.axios.post(URL,{
+      userModel.login({
         name:name,
         password:password,
       })
       .then(res =>{
-        if(res.data.code == 200){
           this.err = res.data.message;
           this.hidden = true;
-          let token = res.data.token;
-          localStorage.setItem("tokens",token);
-          let URL = 'http://localhost:3000/api/okr';
-          this.axios.get(URL,{
-            params:{'token':token}
-          }).then(res=>{
-            console.log(res.data.data.length);
-            if(res.data.data.length>0){
-              this.$router.push('/todaytodos')
-            }else{
-              this.$router.push('/addokr')
-            }
-          })
+        if(res.data.code == 200){
+          this.$router.push('/todaytodos')
         }else if(res.data.code == 0){
           this.err ='用户名输入或密码错误,请重新输入';
           this.hidden = true;
@@ -93,12 +81,10 @@ export default {
   }
 }
 </script>
-
 <style type="text/css" lang="less">
 @divide: 10;
 @psdWidth: 750px;
 @ppr: @psdWidth/@divide/1rem;
-
 .lunar-login{
   background-color:#fff;
   height: 100%;

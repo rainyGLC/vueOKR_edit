@@ -33,8 +33,8 @@
   </div>
 </div>
 </template>
-
 <script>
+  import okrModel from '@/global/model/okrModel.js'
   export default{
     name:'viewokr',
     data(){
@@ -48,14 +48,8 @@
     },
     created(){
       let id = this.$route.params.id;
-      let token = localStorage.getItem('tokens');
-      let URL = 'http://localhost:3000/api/okr/' + id;
-      this.axios.get(URL,{
-        params:{
-          id:id,
-          token:token
-        }
-      }).then(res=>{
+      okrModel.viewokrId(id).then(res=>{
+        console.log(res)
         if(res.data.code ==200){
           console.log(res.data);
           this.keyresults=res.data.data.keyresults;

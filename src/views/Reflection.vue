@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import todosModel from '@/global/model/todosModel.js'
 export default {
   name: 'reflection',
   data(){
@@ -93,12 +94,8 @@ export default {
     }
   },
   created(){
-    let token = localStorage.getItem("tokens");
-    let todos_id = this.$route.params.id;
-    let URL = 'http://localhost:3000/api/todos/' + todos_id;
-    this.axios.get(URL,{
-      params:{"token":token}
-    }).then(res=>{
+    let id = this.$route.params.id;
+     todosModel.createId(id).then(res=>{
       if(res.data.code==200){
         this.surprise=res.data.data.surprise;
         this.todosArr=res.data.data.todos;
@@ -106,7 +103,7 @@ export default {
           this.complete.push({id:item.id,status:0});
         })
       }
-    })
+     })
   },
   methods:{
     completeSectle(item,index){
@@ -144,20 +141,18 @@ export default {
       }
     },
     save(){
-      let token = localStorage.getItem('tokens');
-      let todos_id =this.$route.params.id;
       let reflect = this.reflect;
       let state = this.state;
       if(!reflect || !state){
         return alert('请输入反思以及选择情绪')
       }
-      let URL ='http://localhost:3000/api/todos/' + todos_id;
-      this.axios.post(URL,{
+      let id =this.$route.params.id;
+      todosModel.createEdit(id,{
         todos:this.complete,
         reflect:this.reflect,
         happiness:this.state
       }).then(res=>{
-        if(res.data.code ==200){
+        if(res.data.code==200){
           this.$router.push({name:'completetodos'});
         }else if(res.data.code==0){
           console.log(data)
@@ -192,7 +187,12 @@ html,body{
   background-color:#f7f7f7;
   padding-top: 30px/@ppr;
   .todos-section{
-    width: 650px/@ppr;
+    display: block;
+    height: 100%;
+    width: 86.7%;
+    background-color: #fff;
+    margin: 30px/@ppr auto;
+    border-radius: 30px/@ppr;
     .todos-topbar{
       width: 100%;
       height: 79px/@ppr;
@@ -224,8 +224,8 @@ html,body{
       }
     }
     .todos-content{
+      padding:15px;
       width: 100%;
-      // height: 830px/@ppr;
       background-color:#fff;
       vertical-align: top;
       border-radius:0 0 25px/@ppr 25px/@ppr;
@@ -258,9 +258,7 @@ html,body{
               overflow: hidden;
               text-overflow: ellipsis;
               padding-left:50px/@ppr;
-
-              }
-
+            }
             .todos-click{
               vertical-align: top;
               display: inline-block;
@@ -348,7 +346,6 @@ html,body{
           position: absolute;
           top:5px/@ppr;
           left: -50px/@ppr;
-
         }
       }
       .todos-introspection{

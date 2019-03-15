@@ -58,6 +58,8 @@
   </div>
 </template>
 <script>
+import todosModel from '@/global/model/todosModel.js'
+import todokrModel from '@/global/model/todokrModel.js'
 export default {
   name: 'todaytodos',
   data(){
@@ -68,15 +70,11 @@ export default {
     }
   },
   created(){
-    let token = localStorage.getItem('tokens');
-    let URL ='http://localhost:3000/api/todos';
-    this.axios.get(URL,{
-      params:{"token":token}
-    }).then(res=>{
+    todosModel.todos().then(res=>{
       if(res.data.code==200){
         this.todosArr = res.data.data;
       }else if(res.data.code==0){
-        console.log(data);
+        console.log(data)
       }
     }).catch(err=>{
       console.log(err)
@@ -95,7 +93,6 @@ export default {
         day ="0" + day;
       }
       let date_display = fullYear +'-' + month + '-' +day;
-      console.log(date_display);
       return date_display;
     },
     mood(id){
@@ -112,11 +109,8 @@ export default {
       }
     },
     check(id){
-      let URL ='http://localhost:3000/api/todo-kr/' + id;
-      this.axios.get(URL,{
-        params:{id:id}
-      }).then(res=>{
-        if(res.data.code ==200){
+      todokrModel.todokr(id).then(res=>{
+        if(res.data.code==200){
           this.state = res.data.data;
           this.show= true;
         }else if(res.data.code==0){
@@ -150,10 +144,16 @@ html,body{
   width: 100%;
   height: 100%;
   .major-container{
-    margin-top:20px;
-    width: 650px/@ppr;
-    background-color: #f7f7f7;
-    border-radius: 5px 5px 0 0;
+    display: block;
+    height: 100%;
+    width: 86.7%;
+    background-color: #fff;
+    margin: 30px/@ppr auto;
+    border-radius: 30px/@ppr;
+    // margin-top:20px;
+    // width: 650px/@ppr;
+    // background-color: #f7f7f7;
+    // border-radius: 5px 5px 0 0;
     header{
       font-size: 0;
       background-color: #ffffff;
@@ -200,6 +200,7 @@ html,body{
       }
     }
     .container{
+      padding:15px/@ppr;
       width: 100%;
       height: 100%;
       background-color: #ffffff;

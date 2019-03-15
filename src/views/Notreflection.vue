@@ -29,6 +29,7 @@
 </template>
 
 <script>
+  import todosModel from '@/global/model/todosModel.js'
 export default {
   name:'notreflection',
   data(){
@@ -39,17 +40,13 @@ export default {
     }
   },
   created(){
-    let token = localStorage.getItem('tokens');
-    let todos_id =this.$route.params.id;
-    let URL = 'http://localhost:3000/api/todos';
-    this.axios.get(URL,{
-      params:{"token":token}
-    }).then(res=>{
+    todosModel.todos().then(res=>{
       if(res.data.code==200){
         let newData = res.data.data[0];
         let reflect = newData.reflect;
+        console.log(reflect)
         if(reflect != null){
-          this.router.push({name:'completetodos'});
+          this.$router.push({name:'completetodos'});
         }else{
           this.notreflection = '未反思';
         }
@@ -59,30 +56,26 @@ export default {
     }).catch(err=>{
       console.log(err)
     })
-    let URLS = 'http://localhost:3000/api/todos/' + todos_id;
-    this.axios.get(URLS,{
-      params:{"token":token}
-    }).then(res=>{
+    let id =this.$route.params.id;
+    todosModel.createId(id).then(res=>{
       if(res.data.code==200){
         this.surprise=res.data.data.surprise;
         this.todos = res.data.data.todos;
       }else if(res.data.code==0){
         console.log(data)
       }
-    }).catch(err=>{
+    }).catch(err =>{
       console.log(err)
     })
   },
   methods:{
     addBtn(){
-      let todos_id = this.$route.query.id;
-      this.$router.push({name:'reflection',query:{id:todos_id}});
+      let id = this.$route.params.id;
+      this.$router.push({name:'reflection',params:{id:id}});
     }
   }
 };
 </script>
-
-
 <style lang="less">
 @divide: 10;
 @psdWidth: 750px;
@@ -106,7 +99,12 @@ html,body{
   background-color:#f7f7f7;
   padding-top: 30px/@ppr;
   .todos-section{
-    width: 650px/@ppr;
+    display: block;
+    height: 100%;
+    width: 86.7%;
+    background-color: #fff;
+    margin: 30px/@ppr auto;
+    border-radius: 30px/@ppr;
     .todos-topbar{
       width: 100%;
       height: 79px/@ppr;
@@ -138,6 +136,7 @@ html,body{
       }
     }
     .todos-content{
+      padding:15px/@ppr;
       width: 100%;
       height: 830px/@ppr;
       background-color:#fff;
@@ -224,6 +223,14 @@ html,body{
       border-radius:5px/@ppr;
       text-align: center;
     }
+    .todos-reflect{
+        margin-top:30px/@ppr;
+        text-align: center;
+        .reflect-title{
+          font-size: 40px/@ppr;
+          text-align: center;
+        }
+      }
     .todos-confirm-hint{
       text-align: center;
       font-size: 0;

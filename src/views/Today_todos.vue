@@ -83,6 +83,8 @@
 </div>
 </template>
 <script>
+import okrModel from '@/global/model/okrModel.js'
+import todosModel from '@/global/model/todosModel.js'
 
 export default {
   name: 'todaytodos',
@@ -112,24 +114,26 @@ export default {
   },
   //从历史纪录里判断有无今日三件事
   created(){
-    let token = localStorage.getItem('tokens');
-    let URL = 'http://localhost:3000/api/todos';
-    this.axios.get(URL,{
-      params:{'token':token}
-    }).then(res=>{
+    okrModel.okr().then(res => {
+      if(res.data.data.length === 0){
+        this.$router.replace('/addokr');
+      }else{
+        return res
+      }
+    }).catch(err=>{
+      console.log(err);
+    })
+    todosModel.todos().then(res=>{
       if(res.data.code==200){
         let newData = res.data.data[0];
         let created_at = newData.created_at;
+        console.log(created_at);
         let id = newData.id;
-        console.log(id);
         let created_time = new Date(new Date(created_at).toLocaleDateString()).getTime();
         let now_time = new Date(new Date().toLocaleDateString()).getTime();
         if(created_time >= now_time){
-          console.log(ooo);
-          this.$router.push({name:'notreflection',auery:{id:newData.id}});
+          // this.$router.push({name:'notreflection',params:{id:newData.id}});
         }
-      }else if(res.data.code==0){
-        console.log(data)
       }
     }).catch(err=>{
       console.log(err)
@@ -139,11 +143,7 @@ export default {
     relevance(today){
       console.log(today);
       this.show = true;
-      let token = localStorage.getItem('tokens');
-      let URL = 'http://localhost:3000/api/okr';
-      this.axios.get(URL,{
-        params:{"token":token}
-      }).then(res=>{
+      okrModel.okr().then(res=>{
         if(res.data.code==200){
           this.objectivesArr = res.data.data;
         }else if(res.data.code==0){
@@ -223,26 +223,22 @@ export default {
       if(surprise == '' || one){
         return alert('请添加事件关联')
       }
-      let token = localStorage.getItem('tokens');
-      let URL = 'http://localhost:3000/api/todos';
-      console.log(this.todoOne);
       let data = [{value:this.todoOne,keyresults:this.okrOne},
         {value:this.todoTwo,keyresults:this.okrTwo},
         {value:this.todoThree,keyresults:this.okrThree}];
-      this.axios.post(URL,{
-        token:token,
-        todos:data,
-        surprise:surprise
-      }).then(res=>{
-        if(res.data.code==200){
-          let todos_id = res.data.todos_id;
-          this.$router.push({name:'notreflection',query:{id:todos_id}});
-        }else if(res.data.code==0){
-          console.log(data)
-        }
-      }).catch(err=>{
-        console.log(err)
-      })
+        todosModel.create({
+          todos:data,
+          surprise:surprise
+        }).then(res=>{
+          if(res.data.code==200){
+            let id = res.data.todos_id;
+            this.$router.push({name:'notreflection',params:{id:id}});
+          }else if(res.data.code==0){
+            console.log(data)
+          }
+        }).catch(err=>{
+          console.log(err)
+        })
     }
   },
   watch:{
@@ -280,11 +276,9 @@ html,body{
 }
 .not-section{
   .container{
-    // display: none;
     width: 750px/@ppr;
     height: 1294px/@ppr;
     .todos-contaner{
-      // background-color:red;
       padding-bottom:30px/@ppr;
       .todos-section{
         width: 650px/@ppr;
@@ -292,31 +286,29 @@ html,body{
         padding-bottom:50px/@ppr;
         border-radius: 5px 5px 0 0;
         .nav-list{
-              display: flex;
-              justify-content: space-between;
-              border-radius: 18px 5px 0 0;
-              background-color:#a7cae4;
-              height: 90px/@ppr;
-              .nav-list-item-link{
-                  display: inline-block;
-                  text-align: center;
-                  line-height: 90px/@ppr;
-                  width: 33%;
-                  font-size: 28px/@ppr;
-                  vertical-align: top;
-                  margin: 0;
-                  color:#000;
-              }
-              .nav-list-item-link:nth-child(1){
-                  background-image: url(./../assets/image/not.png);
-                  background-size: cover;
-                  background-repeat: no-repeat;
-              }
+          display: flex;
+          justify-content: space-between;
+          border-radius: 18px 5px 0 0;
+          background-color:#a7cae4;
+          height: 90px/@ppr;
+          .nav-list-item-link{
+              display: inline-block;
+              text-align: center;
+              line-height: 90px/@ppr;
+              width: 33%;
+              font-size: 28px/@ppr;
+              vertical-align: top;
+              margin: 0;
+              color:#000;
           }
-
+          .nav-list-item-link:nth-child(1){
+              background-image: url(./../assets/image/not.png);
+              background-size: cover;
+              background-repeat: no-repeat;
+          }
+        }
         .todos-content{
           width: 100%;
-
           .todos-title{
             font-size: 36px/@ppr;
             font-weight: 600;
@@ -346,9 +338,8 @@ html,body{
                 line-height: 28px/@ppr;
                 color: #b3b3b3;
                 outline: none;
-
               }
-              }
+            }
               .todos-click{
                 vertical-align: top;
                 display: inline-block;
@@ -401,7 +392,6 @@ html,body{
               background-color:#f2f8fc;
               border-radius: 5px/@ppr;
               resize:none;
-
             }
           }
         }
@@ -416,8 +406,7 @@ html,body{
         font-weight: 600;
         line-height: 88px/@ppr;
         border-radius:10px/@ppr;
-        margin-top: 30px/@ppr;
-        margin-bottom: 83px/@ppr;
+        margin:30px/@ppr 40px/@ppr 83px/@ppr 40px/@ppr;
       }
       .todos-confirm-hint{
         text-align: center;
@@ -511,7 +500,6 @@ html,body{
             .shade-content-text{
               position:relative;
               width: 690px/@ppr;
-              // height: 74px/@ppr;
               border:1px/@ppr solid #cccccc;
               border-radius:7px/@ppr;
               padding-top: 20px/@ppr;
@@ -523,7 +511,6 @@ html,body{
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
-
               }
               .shade-text-english{
                 display: none;
@@ -534,7 +521,6 @@ html,body{
             .shade-content-text.active{
                 background-color: #999;
                 border:1px solid #999;
-
               }
             .shade-content-text:before{
               content: '';
@@ -597,9 +583,7 @@ html,body{
             line-height: 88px/@ppr;
           }
         }
-
       }
-
     }
   }
 }

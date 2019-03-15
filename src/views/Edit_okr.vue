@@ -46,8 +46,8 @@
   </div>
 </div>
 </template>
-
 <script>
+import okrModel from '@/global/model/okrModel.js'
 export default {
   name:'editokr',
   data(){
@@ -60,14 +60,7 @@ export default {
   },
   created(){
     let id = this.$route.params.id;
-    let token = localStorage.getItem('tokens');
-    let URL = 'http://localhost:3000/api/okr/' + id;
-    this.axios.get(URL,{
-      params:{
-        id:id,
-        token:token
-      }
-    }).then(res=>{
+    okrModel.viewokrId(id).then(res=>{
       if(res.data.code==200){
         this.objective = res.data.data.objective;
         let keyresultlist = res.data.data.keyresults;
@@ -90,8 +83,8 @@ export default {
       }else if(res.data.code==0){
         console.log(res.data)
       }
-    }).catch(err=>{
-      console.log(err)
+    }).catch(res=>{
+      console.log(res)
     })
   },
   methods:{
@@ -115,10 +108,7 @@ export default {
       let keyresults = this.keyresults;
       keyresults = keyresults.concat(this.isDelete)
       let deadline = this.deadline;
-      let token = localStorage.getItem('tokens');
-      let URL = 'http://localhost:3000/api/okr/' + id;
-      this.axios.put(URL,{
-        token:token,
+      okrModel.saveokrId(id,{
         objective:objective,
         keyresults:keyresults,
         deadline:deadline,
