@@ -57,7 +57,7 @@
                 <p class="shade-Chinese">{{item.objective}}</p>
               </div>
               <div>
-                <div class="shade-content-text select"
+                <div class="shade-content-text"
                   v-for='(data,index) in item.keyresults'
                   :key='data.id'
                   :class= "data.active ? 'active' :'' == data.id"
@@ -132,7 +132,7 @@ export default {
         let created_time = new Date(new Date(created_at).toLocaleDateString()).getTime();
         let now_time = new Date(new Date().toLocaleDateString()).getTime();
         if(created_time >= now_time){
-          this.$router.push({name:'notreflection',params:{id:newData.id}});
+          // this.$router.push({name:'notreflection',params:{id:newData.id}});
         }
       }
     }).catch(err=>{
@@ -587,5 +587,4 @@ html,body{
     }
   }
 }
-
 </style>

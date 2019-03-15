@@ -1,4 +1,4 @@
-# vue_OKR
+# vueOKR_edit
 
 ## Project setup
 ```
